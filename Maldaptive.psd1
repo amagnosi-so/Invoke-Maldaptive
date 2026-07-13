@@ -71,7 +71,10 @@ NestedModules = @(
     'Helpers\LdapObjectConversion.psm1',
     'Helpers\LdapSearchRequest.psm1',
     'Modules\Deobfuscation\Deobfuscation.psm1',
+    'Modules\Obfuscation\Obfuscation.psm1',
+    'Modules\Obfuscation\RecipeSearch.psm1',
     'Modules\Detection\DetectionHelper.psm1',
+    'Modules\Detection\DetectionExtended.psm1',
     'Modules\UI\Invoke-MaldaptiveMenu.psm1'
 )
 
@@ -120,8 +123,24 @@ FunctionsToExport = @(
 	'Remove-RandomWildcard',
 	'Remove-RandomExtensibleMatchFilter',
     #
+    # Obfuscation functions
+    'Add-RandomParenthesis',
+	'Add-RandomBooleanOperator',
+	'Add-RandomBooleanOperatorInversion',
+	'Add-RandomWhitespace',
+	'Add-RandomWildcard',
+	'Add-RandomExtensibleMatchFilter',
+	'Add-RandomCase',
+	'Add-RandomHexValue',
+	'Add-RandomOid',
+	'Add-RandomFilter',
+	'Add-RandomPresenceFilter',
+	'Add-RandomFilterListOrder',
+	'Invoke-ObfuscationRecipeSearch',
+    #
     # Detection functions
     'Find-Evil',
+	'Find-EvilExtended',
 	'Out-EvilSummary',
 	'Show-EvilSummary',
     #
@@ -157,7 +176,10 @@ ModuleList = @(
     'Helpers\LdapObjectConversion.psm1',
     'Helpers\LdapSearchRequest.psm1',
     'Modules\Deobfuscation\Deobfuscation.psm1',
+    'Modules\Obfuscation\Obfuscation.psm1',
+    'Modules\Obfuscation\RecipeSearch.psm1',
     'Modules\Detection\DetectionHelper.psm1',
+    'Modules\Detection\DetectionExtended.psm1',
     'Modules\UI\Invoke-MaldaptiveMenu.psm1'
 )
 

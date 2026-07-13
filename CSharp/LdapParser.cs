@@ -9879,5 +9879,11 @@ namespace Maldaptive
 		CONTEXT_BOOLEANOPERATOR_ADJACENT_REPEATING_FILTER_NOT_COUNT,
 		CONTEXT_BOOLEANOPERATOR_AND_MODIFYING_SINGLE_FILTER,
 		CONTEXT_BOOLEANOPERATOR_OR_MODIFYING_SINGLE_FILTER,
+		// Extended (community) Detection IDs - emitted only by the PowerShell Find-EvilExtended detectors (Find-Evil -IncludeExtendedDetection).
+		// These close logical-equivalence-transform gaps that the core artifact-based ruleset does not score.
+		EXTENDED_DEFINED_ATTRIBUTE_OID_SYNTAX,
+		EXTENDED_ATTRIBUTE_NONCANONICAL_CASE,
+		EXTENDED_LOGICALLY_INERT_DECOY_FILTER,
+		EXTENDED_REDUNDANT_PRESENCE_FILTER,
     };
 }

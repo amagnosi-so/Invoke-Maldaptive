@@ -154,7 +154,11 @@ https://twitter.com/danielhbohannon/
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Switch]
-        $Summarize
+        $Summarize,
+
+        [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
+        [Switch]
+        $IncludeExtendedDetection
     )
 
     begin
@@ -174,6 +178,14 @@ https://twitter.com/danielhbohannon/
         {
             # Evaluate detection logic and store potential matching Detection(s) for current LDAP SearchFilter.
             $detectionHitArr = [Maldaptive.Detection[]] [Maldaptive.LdapParser]::FindEvil($curSearchFilter,$detectionIDArr)
+
+            # If user input -IncludeExtendedDetection switch parameter is defined then evaluate the community extended detection rules
+            # (Find-EvilExtended) and merge any matching Detection(s) permitted by user input -Include/-Exclude parameters.
+            if ($PSBoundParameters['IncludeExtendedDetection'].IsPresent)
+            {
+                $extendedDetectionHitArr = [Maldaptive.Detection[]] (Find-EvilExtended -SearchFilter $curSearchFilter).Where( { $_.ID -iin $detectionIDArr } )
+                $detectionHitArr = [Maldaptive.Detection[]] (@($detectionHitArr) + @($extendedDetectionHitArr))
+            }
 
             # Generate and return DetectionSummary object for current LDAP SearchFilter if user input -Summarize switch parameter is defined.
             # Otherwise return potential matching Detection(s) for current LDAP SearchFilter.
@@ -384,7 +396,7 @@ https://twitter.com/sabi_elezi/
 https://twitter.com/danielhbohannon/
 #>
 
-    [OutputType([System.Void[]])]
+    [OutputType([System.Void])]
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [Maldaptive.DetectionSummary]

@@ -20,14 +20,14 @@ As defenders, from the very beginning of this research we wanted to release the 
 
 Our intention is to give defenders a multi-month head start on setting up required LDAP SearchRequest telemetry and implementing the full detection ruleset that we published with this research.
 
-| Module Name          | Release Date |
-|----------------------|--------------|
-| LDAP Parser          | 2024-08-07   |
-| Deobfuscation Module | 2024-08-07   |
-| Detection Module     | 2024-08-07   |
-| Detection Ruleset    | 2024-08-07   |
-| Telemetry Module     | 2024-08-07   |
-| Obfuscation Corpus   | 2024-08-07   |
+| Module Name          | Release Date                                          |
+|----------------------|-------------------------------------------------------|
+| LDAP Parser          | 2024-08-07                                            |
+| Deobfuscation Module | 2024-08-07                                            |
+| Detection Module     | 2024-08-07                                            |
+| Detection Ruleset    | 2024-08-07                                            |
+| Telemetry Module     | 2024-08-07                                            |
+| Obfuscation Corpus   | 2024-08-07                                            |
 | Obfuscation Module   | <span style="color:red">Intentionally delayed release |
 
 ## Installation
@@ -61,6 +61,38 @@ The entire detection module is built into the interactive menu as well, at all t
 
 Finally, we published a corpus of 1,337 obfuscated LDAP SearchFilters to be used as examples for detection engineers. These obfuscated samples can also be readily used to test the detection module via the following command: `Get-Content ./Corpus/ObfuscatedSearchFilters.txt | Get-Random | Find-Evil -Summarize | Show-EvilSummary`
 
+## Obfuscation Module Usage
+
+**Obfuscate (interactive or CLI):**
+```powershell
+Import-Module ./Maldaptive.psd1
+Invoke-Maldaptive -SearchFilter '(&(objectCategory=person)(name=krbtgt))' `
+  -Command 'OBFUSCATE\SUBSTITUTE\OID\4,OBFUSCATE\TRANSFORM\FILTERRANDOM\4' -Quiet
+```
+
+**Extended detection (opt-in, everywhere in the session):**
+```powershell
+'(2.5.4.3=person)' | Find-Evil -IncludeExtendedDetection -Summarize | Show-EvilSummary
+Find-EvilExtended  -SearchFilter '...'                       # extended rules only
+Invoke-Maldaptive  -SearchFilter '...' -IncludeExtendedDetection
+```
+
+#### Automatic recipe search (function, full knobs):
+
+```powershell
+Invoke-ObfuscationRecipeSearch -SearchFilter '...' -Strategy Genetic
+Invoke-ObfuscationRecipeSearch -SearchFilter '...' -Strategy Annealing -AnnealSteps 400 -InitialTemperature 80
+Invoke-ObfuscationRecipeSearch -SearchFilter '...' -Strategy Greedy -Restarts 8 -IncludeExtendedDetection
+```
+
+Automatic recipe search (in the menu - picks a strategy, applies the best recipe as a layer):
+
+```
+RECIPE              # Genetic (default)
+RECIPE Greedy
+RECIPE Annealing    # combine with -IncludeExtendedDetection at launch to search the hardened ruleset
+```
+
 ## Parser Usage
 
 The `ConvertTo-LdapObject` function is the simplest way to access the various parsing methods defined in `./CSharp/LdapParser.cs`. There are five (5) levels of parsing available and defined via the function's `-Target` input parameter.
@@ -86,3 +118,4 @@ To simplify the execution of an LDAP SearchRequest we created the `Invoke-LdapQu
 ## Telemetry Module
 
 Gathering LDAP telemetry for client- and server-side log sources is a non-trivial task in a lab environment without closed source EDR agents. Therefore, we packaged our telemetry module for installation, configuration, querying and normalization for client- and server-side telemetry. In our lab we installed this module on a Domain Controller to simplify local testing. **Do not run this module on any production systems. We do not assume responsibility for any damages that might occur in relation to this module.** All telemetry functions are located in `./Helpers/LdapEventLog.psm1`.
+

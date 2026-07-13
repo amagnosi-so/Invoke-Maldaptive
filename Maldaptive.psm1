@@ -23,8 +23,16 @@
 $scriptDir = [System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 
 # Load CSharp LDAP Parser.
+# Only compile the C# types if they are not already loaded in the current session. Add-Type cannot redefine an
+# already-loaded type, and Remove-Module does not unload a compiled assembly, so re-importing the module in the same
+# session would otherwise throw one "type already exists" error per Maldaptive type. This guard makes remove/re-import idempotent.
+# NOTE: because of this (and the .NET inability to reload an assembly in the same AppDomain), edits to LdapParser.cs only
+# take effect in a fresh PowerShell session, not via Import-Module -Force in an existing session.
 $csharpFile = Join-Path -Path $scriptDir -ChildPath 'CSharp\LdapParser.cs'
-Add-Type -Path $csharpFile
+if (-not ('Maldaptive.LdapParser' -as [System.Type]))
+{
+    Add-Type -Path $csharpFile
+}
 
 # Set default SearchRoot (based on relevant environment variables if defined), AttributeList
 # and Scope variables for consistent usage across numerous functions.

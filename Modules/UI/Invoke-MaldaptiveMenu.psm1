@@ -207,7 +207,13 @@ https://twitter.com/danielhbohannon/
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Switch]
-        $Quiet
+        $Quiet,
+
+        # Include the community extended detection rules (Find-Evil -IncludeExtendedDetection) in the live DetectionScore display,
+        # the FIND-EVIL command, and the RECIPE auto-search for this session.
+        [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
+        [Switch]
+        $IncludeExtendedDetection
     )
 
     # Ensure Invoke-Maldaptive module was properly imported before continuing.
@@ -410,6 +416,145 @@ https://twitter.com/danielhbohannon/
         [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Remove-RandomWildcard -RandomNodePercent 100 -RandomCharPercent 80' + $requiredFunctionSuffixArgumentsToHideFromUI }
     )
 
+    # Main\Obfuscate Menu.
+    $menuLevel_Obfuscate = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'INSERT        '; Description = '<Insert> tokens into existing Filters'              }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'SUBSTITUTE    '; Description = '<Substitute> existing tokens with equivalent syntax' }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'TRANSFORM     '; Description = '<Transform> Filters into logically-equivalent forms' }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'SUBSTITUTEORDER'; Description = 'Randomly reorder sibling Filters in commutative FilterLists' }
+    )
+
+    # Main\Obfuscate\Insert Menu.
+    $menuLevel_Obfuscate_Insert = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'WHITESPACE             '; Description = 'Randomly insert <Whitespace> tokens'                                                       }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'PARENTHESIS            '; Description = 'Randomly insert <Parenthesis> tokens'                                                      }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'EXTENSIBLEMATCHFILTER  '; Description = 'Randomly insert <Extensible Match Filter> tokens'                                          }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'BOOLEANOPERATOR        '; Description = 'Randomly insert <Boolean Operator> tokens'                                                 }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'BOOLEANOPERATORINVERTED'; Description = 'Randomly insert <Inverted Boolean Operator> tokens'                                        }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'WILDCARD               '; Description = 'Randomly insert <Wildcard> characters into value of eligible filters'; Attribute = '(lossy)' }
+    )
+
+    # Main\Obfuscate\Insert\Whitespace Menu.
+    $descriptionPrefix = 'Randomly insert <Whitespace> tokens'
+    $menuLevel_Obfuscate_Insert_Whitespace = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWhitespace -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWhitespace -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWhitespace -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWhitespace -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Insert\Parenthesis Menu.
+    $descriptionPrefix = 'Randomly insert <Parenthesis> tokens'
+    $menuLevel_Obfuscate_Insert_Parenthesis = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomParenthesis -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomParenthesis -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomParenthesis -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomParenthesis -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Insert\ExtensibleMatchFilter Menu.
+    $descriptionPrefix = 'Randomly insert <Extensible Match Filter> tokens'
+    $menuLevel_Obfuscate_Insert_ExtensibleMatchFilter = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomExtensibleMatchFilter -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomExtensibleMatchFilter -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomExtensibleMatchFilter -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomExtensibleMatchFilter -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Insert\BooleanOperator Menu.
+    $descriptionPrefix = 'Randomly insert <Boolean Operator> tokens'
+    $menuLevel_Obfuscate_Insert_BooleanOperator = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperator -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperator -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperator -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperator -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Insert\BooleanOperatorInverted Menu.
+    $descriptionPrefix = 'Randomly insert <Inverted Boolean Operator> tokens'
+    $menuLevel_Obfuscate_Insert_BooleanOperatorInverted = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperatorInversion -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperatorInversion -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperatorInversion -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomBooleanOperatorInversion -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Insert\Wildcard Menu.
+    $descriptionPrefix = 'Randomly insert <Wildcard> characters into value of eligible filters'
+    $menuLevel_Obfuscate_Insert_Wildcard = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWildcard -RandomNodePercent 25 -RandomCharPercent 20'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWildcard -RandomNodePercent 50 -RandomCharPercent 40'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWildcard -RandomNodePercent 75 -RandomCharPercent 60'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomWildcard -RandomNodePercent 100 -RandomCharPercent 80' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Substitute Menu.
+    $menuLevel_Obfuscate_Substitute = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'HEX '; Description = 'Randomly <Hex>-encode eligible Value characters'              }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'CASE'; Description = 'Randomly flip <Case> of eligible Attribute/Value characters' }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'OID '; Description = 'Substitute named Attributes with <OID> syntax'               }
+    )
+
+    # Main\Obfuscate\Substitute\Hex Menu.
+    $descriptionPrefix = 'Randomly <Hex>-encode eligible Value characters'
+    $menuLevel_Obfuscate_Substitute_Hex = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomHexValue -RandomNodePercent 25 -RandomCharPercent 20'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomHexValue -RandomNodePercent 50 -RandomCharPercent 40'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomHexValue -RandomNodePercent 75 -RandomCharPercent 60'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomHexValue -RandomNodePercent 100 -RandomCharPercent 80' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Substitute\Case Menu.
+    $descriptionPrefix = 'Randomly flip <Case> of eligible Attribute/Value characters'
+    $menuLevel_Obfuscate_Substitute_Case = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomCase -RandomNodePercent 25 -RandomCharPercent 20'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomCase -RandomNodePercent 50 -RandomCharPercent 40'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomCase -RandomNodePercent 75 -RandomCharPercent 60'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomCase -RandomNodePercent 100 -RandomCharPercent 80' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Substitute\OID Menu.
+    $descriptionPrefix = 'Substitute named Attributes with <OID> syntax'
+    $menuLevel_Obfuscate_Substitute_OID = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomOid -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomOid -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomOid -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomOid -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Transform Menu.
+    $menuLevel_Obfuscate_Transform = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'FILTERRANDOM  '; Description = 'Insert logically-inert random junk <Filter>s'         }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = 'FILTERPRESENCE'; Description = 'Wrap Filters with a redundant <Presence> filter (AND)' }
+    )
+
+    # Main\Obfuscate\Transform\FilterRandom Menu.
+    $descriptionPrefix = 'Insert logically-inert random junk <Filter>s'
+    $menuLevel_Obfuscate_Transform_FilterRandom = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilter -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilter -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilter -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilter -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\Transform\FilterPresence Menu.
+    $descriptionPrefix = 'Wrap Filters with a redundant <Presence> filter (AND)'
+    $menuLevel_Obfuscate_Transform_FilterPresence = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomPresenceFilter -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomPresenceFilter -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomPresenceFilter -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomPresenceFilter -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
+    # Main\Obfuscate\SubstituteOrder Menu.
+    $descriptionPrefix = 'Randomly reorder sibling Filters in commutative FilterLists'
+    $menuLevel_Obfuscate_SubstituteOrder = @(
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '1  '; Description = "$descriptionPrefix -  25%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilterListOrder -RandomNodePercent 25'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '2  '; Description = "$descriptionPrefix -  50%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilterListOrder -RandomNodePercent 50'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '3  '; Description = "$descriptionPrefix -  75%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilterListOrder -RandomNodePercent 75'  + $requiredFunctionSuffixArgumentsToHideFromUI }
+        [PSCustomObject] @{ LineHeader = $lineHeader; Option = '4  '; Description = "$descriptionPrefix - 100%"; FunctionCall = $requiredFunctionPrefixArgumentsToHideFromUI + 'Add-RandomFilterListOrder -RandomNodePercent 100' + $requiredFunctionSuffixArgumentsToHideFromUI }
+    )
+
     # Input options to display non-interactive menus or to perform actions.
     $allInputOptionMenu = [PSCustomObject] @{
         Tutorial         = [PSCustomObject] @{ Option = @('tutorial')                            ; Description = '<Tutorial> of how to use this tool          ' }
@@ -422,6 +567,7 @@ https://twitter.com/danielhbohannon/
         ExportToDisk     = [PSCustomObject] @{ Option = @('export')                              ; Description = '<Export> LdapObfContainer CliXml to disk    ' }
         ExecuteCommand   = [PSCustomObject] @{ Option = @('exec','execute','test','run')         ; Description = '<Execute> ObfSearchFilter locally           ' }
         FindEvil         = [PSCustomObject] @{ Option = @('detect','find-evil')                  ; Description = '<Detect> Obfuscation in ObfSearchFilter     ' }
+        FindStealth      = [PSCustomObject] @{ Option = @('recipe','auto','stealth')             ; Description = 'Auto-search <Recipe> [Genetic|Greedy|Annealing]' }
         ResetObfuscation = [PSCustomObject] @{ Option = @('reset')                               ; Description = '<Reset> ALL obfuscation for ObfSearchFilter ' }
         UndoObfuscation  = [PSCustomObject] @{ Option = @('undo')                                ; Description = '<Undo> LAST obfuscation for ObfSearchFilter ' }
         BackMenu         = [PSCustomObject] @{ Option = @('back','cd ..')                        ; Description = 'Go <Back> to previous obfuscation menu      ' }
@@ -462,29 +608,12 @@ https://twitter.com/danielhbohannon/
             $userResponse = 'quit'
         }
         else {
-            $menuResponse = Show-Menu -Menu $menuVariable -MenuName $userResponse -OptionMenu $optionMenu -InputOptionMenu $allInputOptionMenu -LdapObfContainer $ldapObfContainer -CliCommand:$cliCommand
+            $menuResponse = Show-Menu -Menu $menuVariable -MenuName $userResponse -OptionMenu $optionMenu -InputOptionMenu $allInputOptionMenu -LdapObfContainer $ldapObfContainer -CliCommand:$cliCommand -IncludeExtendedDetection:$IncludeExtendedDetection
 
             # Parse out next menu response from user and LdapObfContainer and potential remaining CliCommand returned from Show-Menu function above.
             $userResponse     = [System.String]   $menuResponse.UserResponse.ToLower()
             $ldapObfContainer = [PSCustomObject]  $menuResponse.LdapObfContainer
             $cliCommand       = [System.String[]] $menuResponse.CliCommand
-
-            # Temporarily output message if OBFUSCATE menu is traversed explaining the intentional delayed release timeline for the MaLDAPtive obfuscation module.
-            if ($userResponse -ceq '_obfuscate')
-            {
-                Write-Host "`nWARNING: " -NoNewline -ForegroundColor Red
-                Write-Host 'Obfuscation module is complete but will be released at a later time (estimated EOY 2024).'
-                Write-Host '         This is meant to give fellow defenders a headstart in implementing defensive measures like:'
-                Write-Host '         [+] ' -NoNewline -ForegroundColor Cyan
-                Write-Host 'Orchestrating client- and server-side LDAP logging'
-                Write-Host '         [+] ' -NoNewline -ForegroundColor Cyan
-                Write-Host 'Automating invocation of ' -NoNewline
-                Write-Host 'Find-Evil -Summarize' -NoNewline -ForegroundColor Green
-                Write-Host ' to evaluate MaLDAPtive detection ruleset'
-
-                # Blank out current user response so calling function will not attempt to load a non-existent menu variable.
-                $userResponse = ''
-            }
         }
 
         if (($userResponse -eq 'quit') -and $PSBoundParameters['Command'] -and -not $PSBoundParameters['NoExit'].IsPresent)
@@ -589,8 +718,15 @@ https://twitter.com/danielhbohannon/
 
         [Parameter(Mandatory = $true, ValueFromPipeline = $false)]
         [PSCustomObject]
-        $LdapObfContainer
+        $LdapObfContainer,
+
+        [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
+        [Switch]
+        $IncludeExtendedDetection
     )
+
+    # Build splat so the -IncludeExtendedDetection switch is forwarded to all Find-Evil / recipe-search calls in this menu when requested.
+    $findEvilExtendedParameters = $IncludeExtendedDetection.IsPresent ? @{ IncludeExtendedDetection = $true } : @{ }
 
     # Boolean for output and execution purposes if current option is designated to execute a command rather than change to a new menu.
     $selectionContainsCommand = $false
@@ -1379,7 +1515,7 @@ https://twitter.com/danielhbohannon/
             }
             elseif ($InputOptionMenu.ShowOption.Option -icontains $userInput)
             {
-                Show-OptionsMenu -Menu $OptionMenu -LdapObfContainer $LdapObfContainer
+                Show-OptionsMenu -Menu $OptionMenu -LdapObfContainer $LdapObfContainer -IncludeExtendedDetection:$IncludeExtendedDetection
             }
             elseif ($InputOptionMenu.OutputTree.Option -icontains $userInput)
             {
@@ -1410,7 +1546,7 @@ https://twitter.com/danielhbohannon/
                 {
                     # Evaluate all Detections in Find-Evil function for current SearchFilter, capturing elapsed execution time for output purposes.
                     $findEvilElapsedTime = Measure-Command -Expression {
-                        $detectionSummary = Find-Evil -SearchFilter $LdapObfContainer.SearchFilter -Summarize
+                        $detectionSummary = Find-Evil -SearchFilter $LdapObfContainer.SearchFilter -Summarize @findEvilExtendedParameters
                     }
 
                     # Output elapsed time for Detection evaluation above.
@@ -1442,6 +1578,79 @@ https://twitter.com/danielhbohannon/
                 {
                     Write-Host "`n`nERROR:" -NoNewline -ForegroundColor Red
                     Write-Host " Cannot evaluate detections because you have not set SearchFilter or SearchFilterPath.`n       Enter" -NoNewline
+                    Write-Host " SHOW OPTIONS" -NoNewline -ForegroundColor Yellow
+                    Write-Host " to set SearchFilter or SearchFilterPath."
+                }
+            }
+            elseif ($InputOptionMenu.FindStealth.Option -icontains ($userInput -split '\s+',2)[0])
+            {
+                if ($LdapObfContainer.SearchFilter)
+                {
+                    # Parse optional search strategy argument (e.g. 'RECIPE Greedy' or 'RECIPE Annealing'), defaulting to Genetic when omitted.
+                    $requestedStrategy = (($userInput -split '\s+',2).Count -gt 1) ? ($userInput -split '\s+',2)[1].Trim() : 'Genetic'
+                    $resolvedStrategy  = @('Greedy','Annealing','Genetic').Where( { $_ -ieq $requestedStrategy } )[0]
+                    if (-not $resolvedStrategy)
+                    {
+                        Write-Host "`nWARNING:" -NoNewline -ForegroundColor Red
+                        Write-Host " Unknown recipe strategy '$requestedStrategy' (valid: Genetic, Greedy, Annealing). Defaulting to Genetic."
+                        $resolvedStrategy = 'Genetic'
+                    }
+
+                    # Auto-search a low-detection obfuscation recipe for the current SearchFilter (capped at its current detection score so no detectable signal is added),
+                    # capturing elapsed execution time for output purposes.
+                    Write-Host "`nSearching for a low-detection obfuscation recipe using the " -NoNewline -ForegroundColor Cyan
+                    Write-Host $resolvedStrategy -NoNewline -ForegroundColor Yellow
+                    Write-Host " strategy (logic-preserving, capped at current detection score)..." -ForegroundColor Cyan
+                    $recipeSearchResult = $null
+                    $recipeSearchElapsedTime = Measure-Command -Expression {
+                        $recipeSearchResult = Invoke-ObfuscationRecipeSearch -SearchFilter $LdapObfContainer.SearchFilter -Strategy $resolvedStrategy -PopulationSize 20 -Generations 10 -Restarts 3 -Iterations 10 -AnnealSteps 150 -Quiet @findEvilExtendedParameters
+                    }
+
+                    # Output elapsed time for recipe search above.
+                    Write-Host "`nElapsed Time: " -NoNewline
+                    Write-Host $recipeSearchElapsedTime -ForegroundColor White
+
+                    if ((-not $recipeSearchResult) -or (-not $recipeSearchResult.Filter) -or ($recipeSearchResult.Distance -le 0) -or ($recipeSearchResult.Filter -ceq $LdapObfContainer.SearchFilter))
+                    {
+                        # Output warning message if no improving within-cap recipe was found.
+                        Write-Host "`nWARNING:" -NoNewline -ForegroundColor Red
+                        Write-Host ' No improving low-detection recipe found for current ObfSearchFilter.'
+                    }
+                    else
+                    {
+                        # Apply discovered obfuscation result as a new obfuscation layer in current obfuscation container.
+                        $recipeSearchTokenized = $recipeSearchResult.Filter | ConvertTo-LdapObject -Target LdapTokenEnriched -TrackModification
+                        $LdapObfContainer = $LdapObfContainer | Add-ObfuscationLayer -SearchFilterTokenized $recipeSearchTokenized
+
+                        # Record recipe metadata in newly-added obfuscation layer history.
+                        $LdapObfContainer.History[-1].Function = 'Invoke-ObfuscationRecipeSearch'
+                        $LdapObfContainer.History[-1].CommandLineSyntax = "Invoke-ObfuscationRecipeSearch -Strategy $resolvedStrategy   # recipe: $($recipeSearchResult.Recipe -join ' -> ')"
+                        $LdapObfContainer.History[-1].CliSyntax = [System.Array] "RECIPE $resolvedStrategy"
+
+                        # Output syntax of CLI syntax and full command executed in above Switch block.
+                        Write-Host "`nExecuted:"
+                        Write-Host '  CLI:  ' -NoNewline
+                        Write-Host "RECIPE $resolvedStrategy" -ForegroundColor Cyan
+                        Write-Host '  Full: ' -NoNewline
+                        Write-Host $LdapObfContainer.History[-1].CommandLineSyntax -ForegroundColor Cyan
+
+                        # Output recipe search summary.
+                        Write-Host "`nResult:"
+                        Write-Host '  Recipe        : ' -NoNewline
+                        Write-Host ($recipeSearchResult.Recipe -join ' -> ') -ForegroundColor Green
+                        Write-Host '  Edit distance : ' -NoNewline
+                        Write-Host $recipeSearchResult.Distance -ForegroundColor White
+                        Write-Host '  Find-Evil     : ' -NoNewline
+                        Write-Host "$($recipeSearchResult.Score) (baseline $($recipeSearchResult.Baseline), cap $($recipeSearchResult.ScoreCap))" -ForegroundColor White
+                        Write-Host "`n  Applied as obfuscation layer $($LdapObfContainer.Layer). Use " -NoNewline
+                        Write-Host 'UNDO' -NoNewline -ForegroundColor Yellow
+                        Write-Host ' to revert.'
+                    }
+                }
+                else
+                {
+                    Write-Host "`n`nERROR:" -NoNewline -ForegroundColor Red
+                    Write-Host " Cannot search for a recipe because you have not set SearchFilter or SearchFilterPath.`n       Enter" -NoNewline
                     Write-Host " SHOW OPTIONS" -NoNewline -ForegroundColor Yellow
                     Write-Host " to set SearchFilter or SearchFilterPath."
                 }
@@ -1908,8 +2117,15 @@ https://twitter.com/danielhbohannon/
 
         [Parameter(Mandatory = $true, ValueFromPipeline = $false)]
         [PSCustomObject]
-        $LdapObfContainer
+        $LdapObfContainer,
+
+        [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
+        [Switch]
+        $IncludeExtendedDetection
     )
+
+    # Build splat so the -IncludeExtendedDetection switch is forwarded to the live DetectionScore/DetectionCount Find-Evil calls when requested.
+    $findEvilExtendedParameters = $IncludeExtendedDetection.IsPresent ? @{ IncludeExtendedDetection = $true } : @{ }
 
     # Set line header for consistent user experience.
     $lineHeader = '[*] '
@@ -1964,10 +2180,10 @@ https://twitter.com/danielhbohannon/
                 $option.Value = $LdapObfContainer.SearchFilter ? $LdapObfContainer.SearchFilterDepth : $null
             }
             'DetectionScore' {
-                $option.Value = $LdapObfContainer.SearchFilter ? (Find-Evil -SearchFilter $LdapObfContainer.SearchFilter -Summarize).TotalScore : $null
+                $option.Value = $LdapObfContainer.SearchFilter ? (Find-Evil -SearchFilter $LdapObfContainer.SearchFilter -Summarize @findEvilExtendedParameters).TotalScore : $null
             }
             'DetectionCount' {
-                $option.Value = $LdapObfContainer.SearchFilter ? (Find-Evil -SearchFilter $LdapObfContainer.SearchFilter -Summarize).DetectionCount : $null
+                $option.Value = $LdapObfContainer.SearchFilter ? (Find-Evil -SearchFilter $LdapObfContainer.SearchFilter -Summarize @findEvilExtendedParameters).DetectionCount : $null
             }
             default {
                 Write-Warning "Unhandled switch block option in function $($MyInvocation.MyCommand.Name): $_"
